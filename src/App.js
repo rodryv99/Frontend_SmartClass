@@ -1,4 +1,4 @@
-// App.js - SIN ruta separada para auditoría
+// App.js - Actualizado con nueva estructura de componentes de gestión de notas
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
@@ -26,8 +26,8 @@ import ClassDetail from './pages/ClassDetail';
 import AttendanceManagement from './components/AttendanceManagement';
 import ParticipationManagement from './components/ParticipationManagement';
 
-// Pages de Gestión de Notas
-import GradeManagement from './components/GradeManagement';
+// Componente principal de Gestión de Notas (refactorizado)
+import GradeManagement from './components/grades/GradeManagement';
 
 // Tema personalizado
 const theme = createTheme({
