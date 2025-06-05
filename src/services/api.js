@@ -1,12 +1,17 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
+// URL dinámica que se adapta al entorno
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
+console.log('🔗 API URL configurada:', API_URL);
+console.log('🌍 Entorno:', process.env.REACT_APP_ENVIRONMENT || 'development');
 
 const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 30000, // 30 segundos timeout para producción
 });
 
 // Interceptor para agregar el token a las solicitudes
@@ -19,6 +24,30 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar errores de respuesta
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Log del error para debugging en producción
+    console.error('❌ Error de API:', {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    
+    // Si el token expiró, redirigir al login
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+    
     return Promise.reject(error);
   }
 );
